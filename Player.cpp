@@ -18,14 +18,6 @@ Player::Player() {}
  */
 Player::Player(int playerIdx, const array<int, 4> &piecePositions) : playerIdx(
         playerIdx), piecePositions(piecePositions) {
-    // Generate LUT:
-    for (int i = 0; i < 52; i++)
-    {
-        LUT[i][0] = i;              // PLayer idx 0
-        LUT[i][1] = (i + 39)%52;    // PLayer idx +1
-        LUT[i][2] = (i + 26)%52;    // PLayer idx +2
-        LUT[i][3] = (i + 13)%52;    // PLayer idx +3
-    }
 }
 
 /**
@@ -45,8 +37,7 @@ int Player::MakeMove(int &movePieceIdx, int &diceRoll){
     // Start by rolling the dice
     diceRoll = RollDie();
 
-    array<int,4> movablePieceIdx;
-    int nMovable = MovablePieces(diceRoll, movablePieceIdx);
+    int nMovable = MovablePieces(diceRoll);
 
 
     if (VERBOSE) {
@@ -104,7 +95,7 @@ Player::~Player() {
  * @param moveable
  * @return number of moveavble pieces
  */
-int Player::MovablePieces(int &diceRoll, array<int,4> &movablePieceIdx){
+int Player::MovablePieces(int &diceRoll){
 
         // Counter to keep track of number of moveable piece
     int nMoveable = 0;
@@ -142,10 +133,6 @@ int Player::MovablePieces(int &diceRoll, array<int,4> &movablePieceIdx){
     return nMoveable;
 }
 
-const std::array<std::array<int, 4>, 52> &Player::getLut() const {
-    return LUT;
-}
-
 const std::array<int, 4> &Player::getPiecePositions() const {
     return piecePositions;
 }
@@ -154,6 +141,6 @@ int Player::getPlayerIdx() const {
     return playerIdx;
 }
 
-void Player::setPiecePosition(const int pieceIdx, const int posNew) {
+void Player::setPiecePosition(const int &pieceIdx, const int &posNew) {
     piecePositions[pieceIdx] = posNew;
 }
