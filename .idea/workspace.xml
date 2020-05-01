@@ -30,17 +30,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bd5eba76-37f5-4855-8893-f896f7e98edd" name="Default Changelist" comment="Added git to Clion">
-      <change afterPath="$PROJECT_DIR$/PlayerAC.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PlayerBase.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PlayerRandom.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="bd5eba76-37f5-4855-8893-f896f7e98edd" name="Default Changelist" comment="Prepared for reinforcement learning">
+      <change afterPath="$PROJECT_DIR$/PlayerAC.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Parameters.h" beforeDir="false" afterPath="$PROJECT_DIR$/Parameters.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/Player.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PlayerAC.h" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerAC.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +89,7 @@
       <workItem from="1587885219332" duration="15801000" />
       <workItem from="1588141272520" duration="13149000" />
       <workItem from="1588156597429" duration="14391000" />
-      <workItem from="1588329403164" duration="8041000" />
+      <workItem from="1588329403164" duration="8344000" />
     </task>
     <task id="LOCAL-00001" summary="Added git to Clion">
       <created>1588152867989</created>
@@ -112,7 +105,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588166202364</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Prepared for reinforcement learning">
+      <created>1588342546785</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1588342546785</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -132,7 +132,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added git to Clion" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added git to Clion" />
+    <MESSAGE value="Prepared for reinforcement learning" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prepared for reinforcement learning" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2373" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588142759696">
@@ -203,10 +204,10 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2510" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588166216972" />
-    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588166183007">
+    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588342821423">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588166183007" />
+    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588342821423" />
     <state x="2612" y="328" width="595" height="430" key="git4idea.merge.GitPullDialog" timestamp="1588152846303">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
