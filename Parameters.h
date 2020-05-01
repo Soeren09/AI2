@@ -17,7 +17,8 @@ const int N_GLOBUS = 8;
 
 const int HOME_POSITION = 0;
 const int START_POSITION = 1;
-const int GOAL_POSITION =57;
+const int GOAL_POSITION = 57;
+const int UNREACHABLE_POSITION = -1;
 
 const int GOAL_AREA_START = 52;
 const int POS_LAST_GLOBUS = 48;

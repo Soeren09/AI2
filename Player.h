@@ -6,7 +6,6 @@
 #define AI_PLAYER_H
 
 #include <array>
-#include <vector>
 
 
 class Player {

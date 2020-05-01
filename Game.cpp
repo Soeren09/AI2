@@ -3,6 +3,8 @@
 //
 #include <iostream>
 #include <chrono>
+#include <random>
+#include <algorithm>
 
 #include "Game.h"
 #include "Parameters.h"
@@ -10,26 +12,45 @@
 using namespace std;
 
 Game::Game() {
-    Players[0] = Player(0, std::array<int,4>{0,0,0,0}  );
-    Players[1] = Player(1, std::array<int,4>{0,0,0,0}  );
-    Players[2] = Player(2, std::array<int,4>{0,0,0,0}  );
-    Players[3] = Player(3, std::array<int,4>{0,0,0,0}  );
+    Players[0] = new PlayerRandom(0, std::array<int,4>{0,0,0,0}  );
+    Players[1] = new PlayerRandom(1, std::array<int,4>{0,0,0,0}  );
+    Players[2] = new PlayerRandom(2, std::array<int,4>{0,0,0,0}  );
+    Players[3] = new PlayerRandom(3, std::array<int,4>{0,0,0,0}  );
+
+        // Random shuffle the players
+    shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
 
     // Generate LUT:
-    for (int i = 0; i < 52; i++)
-    {
+    for (int i = 0; i < 52; i++) {
         LUT[i][0] = i;              // PLayer idx 0
         LUT[i][1] = (i + 39)%52;    // PLayer idx +1
         LUT[i][2] = (i + 26)%52;    // PLayer idx +2
         LUT[i][3] = (i + 13)%52;    // PLayer idx +3
     }
+//
+//    cout << Players[0]->getPlayerIdx() <<
+//         Players[1]->getPlayerIdx() <<
+//         Players[2]->getPlayerIdx() <<
+//         Players[3]->getPlayerIdx() << endl;
 }
 
-void Game::Reset() {
-    Players[0] = Player(0, std::array<int,4>{0,0,0,0}  );
-    Players[1] = Player(1, std::array<int,4>{0,0,0,0}  );
-    Players[2] = Player(2, std::array<int,4>{0,0,0,0}  );
-    Players[3] = Player(3, std::array<int,4>{0,0,0,0}  );
+Game::Game(PlayerBase &p1, PlayerBase &p2, PlayerBase &p3, PlayerBase &p4){
+    Players[0] = &p1;
+    Players[1] = &p2;
+    Players[2] = &p3;
+    Players[3] = &p4;
+
+        // Random shuffle the players
+    shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
+
+
+    // Generate LUT:
+    for (int i = 0; i < 52; i++) {
+        LUT[i][0] = i;              // PLayer idx 0
+        LUT[i][1] = (i + 39)%52;    // PLayer idx +1
+        LUT[i][2] = (i + 26)%52;    // PLayer idx +2
+        LUT[i][3] = (i + 13)%52;    // PLayer idx +3
+    }
 }
 
 /**
@@ -47,15 +68,23 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
         myfile.open(replayPath);
     }
 
-    int iteration_max = 130;
-    int winner = -1;
+    int iteration_max = 230;
     for (int iteration = 0; iteration < iteration_max; iteration++)    {
-        for (int playerTurn = 0; playerTurn < N_PLAYERS; playerTurn++)         {
+        for (int playerTurn = 0; playerTurn < N_PLAYERS; playerTurn++) {
 
             int movePieceIdx = -1, diceRoll = -1;
-            if (Players[playerTurn].MakeMove(movePieceIdx, diceRoll)) {
+            array<int, 4*(N_PLAYERS-1)> enemyPos;
+            FindEnemyPos(playerTurn, enemyPos);
+
+
+            if (Players[playerTurn]->MakeDecision(movePieceIdx, diceRoll, enemyPos)) {
                 int status = PlayerMove(playerTurn, movePieceIdx, diceRoll);
             }
+                // PLayer is unable to move
+            else {
+
+            }
+
             if (VERBOSE) {
                 cout << "Print: " << "PlayerIdx: " << playerTurn << " DieRoll: " << diceRoll << " PieceIdx: " << movePieceIdx << endl << endl;
             }
@@ -67,10 +96,15 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
                 // Check for winner, and return if found
             if (WinnerCheck(playerTurn)) {
                 if (VERBOSE) {
-                    cout << winner << " won in " << iteration << " iterations " << endl;
+                    cout << playerTurn << " won in " << iteration << " iterations " << endl;
                 }
-                return playerTurn;
+                return Players[playerTurn]->getPlayerIdx();
             }
+
+//                // If player rolled a six, or has every piece at home, he can reroll
+//            if (diceRoll == DIE_SIX || HomeCheck(playerTurn)) {
+//                playerTurn -= 1;
+//            }
         }
     }
         // Should get here!
@@ -98,7 +132,6 @@ int Game::PlayerMove(const int &playerIdx, const int &PieceIdx, const int &diceR
             break;
         case DIE_SIX:
             HandleSix(playerIdx, PieceIdx);
-            // TODO extra dice roll
             break;
         default:    // normal move
             HandleNormal(playerIdx, PieceIdx, diceRoll);
@@ -115,7 +148,7 @@ int Game::PlayerMove(const int &playerIdx, const int &PieceIdx, const int &diceR
  * @return return true if the player were able to move
  */
 int Game::HandleGlobus(const int &playerIdx, const int &movePieceIdx) {
-    int posCur = Players[playerIdx].getPiecePositions()[movePieceIdx];
+    int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
     // The piece is past the last globus
     if (posCur > POS_LAST_GLOBUS) {
@@ -166,7 +199,7 @@ int Game::HandleGlobus(const int &playerIdx, const int &movePieceIdx) {
  * @return return true if the player were able to move
  */
 int Game::HandleStar(const int playerIdx, const int movePieceIdx){
-    int posCur = Players[playerIdx].getPiecePositions()[movePieceIdx];
+    int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
     // If the piece is past the last star (time 50 nano secounds)
     if (posCur >= POS_LAST_STAR || posCur == HOME_POSITION){
@@ -207,7 +240,7 @@ int Game::HandleStar(const int playerIdx, const int movePieceIdx){
  * @return return true if the player were able to move
  */
 int Game::HandleSix(const int &playerIdx, const int &movePieceIdx){
-    int posCur = Players[playerIdx].getPiecePositions()[movePieceIdx];
+    int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
     // #####################  If the piece is at the home position  ##############################
     if (posCur == HOME_POSITION) {
@@ -228,7 +261,7 @@ int Game::HandleSix(const int &playerIdx, const int &movePieceIdx){
 }
 
 int Game::HandleNormal(const int &playerIdx, const int &movePieceIdx, const int &dieRoll) {
-    int posCur = Players[playerIdx].getPiecePositions()[movePieceIdx];
+    int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
         // Check if the piece is at the home position
     if ( posCur == HOME_POSITION ){
@@ -302,7 +335,7 @@ int Game::BoardCollisionCheck(const int &playerIdx, const int &PosBoard, collisi
         int enemyPlayerIdx = FindEnemyIdx(playerIdx, enemy);
         for (int pieceIdx = 0; pieceIdx<4; pieceIdx++){     // Check each piece
                 // A piece is not in collision if the piece is at its home position
-            if (Players[enemyPlayerIdx].getPiecePositions()[pieceIdx] == LUT[PosBoard][enemy] && LUT[PosBoard][enemy] != HOME_POSITION) {
+            if (Players[enemyPlayerIdx]->getPiecePositions()[pieceIdx] == LUT[PosBoard][enemy] && LUT[PosBoard][enemy] != HOME_POSITION) {
                 pieceCollision.addCollision(enemyPlayerIdx, pieceIdx);
                 collionsFlag = 1;
 
@@ -345,7 +378,7 @@ void Game::HandleCollision(const int &playerIdx, const int &movePieceIdx, const 
             int enemyIdx = pieceCollision.collisions.first[0];
             int enemyPieceIdx = pieceCollision.collisions.second[0];
             // Get enemy position in his own reference system
-            int enemyPos = Players[enemyIdx].getPiecePositions()[enemyPieceIdx];
+            int enemyPos = Players[enemyIdx]->getPiecePositions()[enemyPieceIdx];
             bool safe = false;
 
             for (auto pos : POS_SAFE_GLOBUS) {
@@ -367,6 +400,51 @@ void Game::HandleCollision(const int &playerIdx, const int &movePieceIdx, const 
     }
 }
 
+
+
+/**
+ * Send home the piece
+ * @param playerIdx
+ * @param pieceIdx
+ */
+void Game::SendHome(const int &playerIdx, const int &pieceIdx){
+    Players[playerIdx]->setPiecePosition(pieceIdx, HOME_POSITION);
+}
+
+/**
+ * Move piece to pos
+ * @param playerIdx
+ * @param pieceIdx
+ * @param pos
+ */
+void Game::MovePiece(const int &playerIdx, const int &pieceIdx, const int pos){
+    Players[playerIdx]->setPiecePosition(pieceIdx, pos);
+}
+
+/**
+ * Win condition is when a player have all its pieces in the goal zone
+ * @return true if the player won
+ */
+int Game::WinnerCheck(const int &PlayerIdx) {
+    for (const int& pos : Players[PlayerIdx]->getPiecePositions()) { // access by const reference
+        if (pos != GOAL_POSITION)
+            return 0;
+    }
+    return 1;
+}
+
+/**
+ * Check if all the pieces is place at the home position
+ * @return true if every piece is at home
+ */
+int Game::HomeCheck(const int &PlayerIdx) {
+    for (const int& pos : Players[PlayerIdx]->getPiecePositions()) { // access by const reference
+        if (pos != HOME_POSITION)
+            return 0;
+    }
+    return 1;
+}
+
 /**
  * Given then player index and the clockwise following player, return player idx
  * @param playerIdx
@@ -378,35 +456,27 @@ int Game::FindEnemyIdx(const int &playerIdx, const int &postIdx) {
 }
 
 /**
- * Send home the piece
- * @param playerIdx
- * @param pieceIdx
+ * Find the positions of the current players enemies, given in the players reference system
+ * @param playerIdx The current player
+ * @param enemyPosition The positions given relative the the current player
  */
-void Game::SendHome(const int &playerIdx, const int &pieceIdx){
-    Players[playerIdx].setPiecePosition(pieceIdx, HOME_POSITION);
-}
-
-/**
- * Move piece to pos
- * @param playerIdx
- * @param pieceIdx
- * @param pos
- */
-void Game::MovePiece(const int &playerIdx, const int &pieceIdx, const int pos){
-    Players[playerIdx].setPiecePosition(pieceIdx, pos);
-}
-
-/**
- * Win condition is when a player have all its pieces in the goal zone
- * @return true if the player won
- */
-int Game::WinnerCheck(const int &PlayerIdx) {
-    for (const int& pos : Players[PlayerIdx].getPiecePositions()) { // access by const reference
-        if (pos != GOAL_POSITION)
-            return 0;
+void Game::FindEnemyPos(const int &playerIdx, std::array<int, 4*(N_PLAYERS-1)> &enemyPosition){
+    int i = 0;
+    for(int enemy = 1; enemy < N_PLAYERS; enemy++){
+        int enemyIdx = FindEnemyIdx(playerIdx, enemy);
+        for (auto piecesPos : Players[enemyIdx]->getPiecePositions() ){
+                // Check if they are in unreachable place
+            if (piecesPos >= GOAL_AREA_START || piecesPos == HOME_POSITION){
+                enemyPosition[i + (4 * (enemy-1))] = UNREACHABLE_POSITION;
+            } else {
+                enemyPosition[i + (4 * (enemy-1))] = LUT[piecesPos][N_PLAYERS-enemy];
+            }
+            i +=1;
+        }
+        i = 0;
     }
-    return 1;
 }
+
 
 void Game::WriteStateToFile(const int &playerIdx, const int &dieRoll, const int &pieceIdx, ofstream &fout){
 
@@ -416,7 +486,7 @@ void Game::WriteStateToFile(const int &playerIdx, const int &dieRoll, const int 
     output += to_string(pieceIdx) + ' ';  // Moved piece
 
     for (auto player : Players){
-        for(auto const& pos: player.getPiecePositions()) {
+        for(auto const& pos: player->getPiecePositions()) {
             output += to_string(pos) + ' ';
         }
     }

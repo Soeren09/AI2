@@ -11,6 +11,8 @@
 #define AI_GAME_H
 
 #include "Player.h"
+#include "PlayerBase.h"
+#include "PlayerRandom.h"
 #include <array>
 #include <string>
 #include <fstream>
@@ -35,25 +37,30 @@ public:
     };
 
     Game();
+    Game(PlayerBase &p1, PlayerBase &p2, PlayerBase &p3, PlayerBase &p4);
+
     int Run(int saveReplay, std::string replayPath);
-    void Reset();
     int WinnerCheck(const int &PlayerIdx);
+    int HomeCheck(const int &PlayerIdx);
     int PlayerMove(const int &playerIdx, const int &PieceIdx, const int &diceRoll);
+
     int HandleStar(const int playerIdx, const int movePieceIdx);
     int HandleGlobus(const int &playerIdx, const int &movePieceIdx);
     int HandleSix(const int &playerIdx, const int &movePieceIdx);
     int HandleNormal(const int &playerIdx, const int &movePieceIdx, const int &dieRoll);
+
     void SendHome(const int &playerIdx, const int &pieceIdx);
     void MovePiece(const int &playerIdx, const int &pieceIdx, const int pos);
 
     int BoardCollisionCheck(const int &playerIdx, const int &PosBoard, collision &pieceCollision);
     void HandleCollision(const int &playerIdx, const int &movePieceIdx, const int &PosBoard, collision &pieceCollision, const int &type);
     int FindEnemyIdx(const int &playerIdx, const int &postIdx);
+    void FindEnemyPos(const int &playerIdx, std::array<int, 4*(N_PLAYERS-1)> &enemyPosition);
 
     void WriteStateToFile(const int &playerIdx, const int &dieRoll, const int &pieceIdx, std::ofstream &fout);
 
 private:
-    std::array<Player,4> Players;
+    std::array<PlayerBase*, 4> Players;
     std::array<std::array<int, 4>, 52> LUT;
 };
 
