@@ -7,19 +7,34 @@
 
 #include "PlayerBase.h"
 #include "Parameters.h"
+#include "ActorCriticParameters.h"
 
 class PlayerAC : public PlayerBase{
-    using PlayerBase::PlayerBase;
+public:
+    PlayerAC(int playerIdx, const std::array<int, 4> &piecePositions);
 
 
-/**
- * This is the main function of this class. It rolls the dice and make the decision about what piece to move.
- * @return return true if able to make a move,
- */
-    int MakeDecision(int &movePieceIdx, int &diceRoll, std::array<int, 4*(N_PLAYERS-1)> &enemyPosition) override;
+    int MakeDecision(int &movePieceIdx, int &diceRoll, enemyPiecePos &enemyPosition) override;
+    void GameAnalysis(int &movePieceIdx, int &diceRoll, enemyPiecePos &enemyPosition) override;
+    void GetReward();
 
+    void UpdateState(enemyPiecePos &enemyPosition);
+    void StoreState();
+    void SetState(enemyPiecePos &enemyPosition);
+    int HostilePosition(int &playerPiecePos, int &enemyPiecePos);
+    int Actor (int &diceRoll, enemyPiecePos &enemyPosition);
 
+private:
+    // The player have three states.
+    // CurState     - is the state that the pieces are in at the moment
+    // StoredState  - is the state that the pieces are in when the player end his turn
+    // PotState     - is the potential state each piece could be in given the dice roll
+    actorCriticPieceState CurState;
+    actorCriticPieceState StoredState;
 
+    actorCriticPieceState PotState;
+
+    int Reward;
 };
 
 

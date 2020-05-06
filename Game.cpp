@@ -27,11 +27,6 @@ Game::Game() {
         LUT[i][2] = (i + 26)%52;    // PLayer idx +2
         LUT[i][3] = (i + 13)%52;    // PLayer idx +3
     }
-//
-//    cout << Players[0]->getPlayerIdx() <<
-//         Players[1]->getPlayerIdx() <<
-//         Players[2]->getPlayerIdx() <<
-//         Players[3]->getPlayerIdx() << endl;
 }
 
 Game::Game(PlayerBase &p1, PlayerBase &p2, PlayerBase &p3, PlayerBase &p4){
@@ -40,9 +35,17 @@ Game::Game(PlayerBase &p1, PlayerBase &p2, PlayerBase &p3, PlayerBase &p4){
     Players[2] = &p3;
     Players[3] = &p4;
 
-        // Random shuffle the players
-    shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
+    for (auto p: Players){
+        if (!(p->GetReady())) {
+            cout << "PlayerIdx: " << p->getPlayerIdx() << " is not ready. Reset player"<< endl;
+            // TODO Reset is disabled
+            //p->Reset();
+        }
+    }
 
+    // TODO Shuffle disable
+        // Random shuffle the players
+    //shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
 
     // Generate LUT:
     for (int i = 0; i < 52; i++) {
@@ -68,25 +71,27 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
         myfile.open(replayPath);
     }
 
-    int iteration_max = 230;
+    int iteration_max = 2;
     for (int iteration = 0; iteration < iteration_max; iteration++)    {
         for (int playerTurn = 0; playerTurn < N_PLAYERS; playerTurn++) {
-
             int movePieceIdx = -1, diceRoll = -1;
-            array<int, 4*(N_PLAYERS-1)> enemyPos;
+            enemyPiecePos enemyPos;
             FindEnemyPos(playerTurn, enemyPos);
 
-
             if (Players[playerTurn]->MakeDecision(movePieceIdx, diceRoll, enemyPos)) {
-                int status = PlayerMove(playerTurn, movePieceIdx, diceRoll);
+                if ( !PlayerMove(playerTurn, movePieceIdx, diceRoll) ) {  // Not Valid move
+                    // TODO Penalize the player
+                    cout << "Player made choose an illegal move." << endl;
+                }
+                    // Analys the move made
+                Players[playerTurn]->GameAnalysis(movePieceIdx, diceRoll, enemyPos);
             }
-                // PLayer is unable to move
-            else {
-
+            else { // PLayer is unable to move
+                // TODO handle when the player is unable to move
             }
 
             if (VERBOSE) {
-                cout << "Print: " << "PlayerIdx: " << playerTurn << " DieRoll: " << diceRoll << " PieceIdx: " << movePieceIdx << endl << endl;
+                cout << "Print: " << "Player: " << playerTurn << " PlayerIdx: " << Players[playerTurn]->getPlayerIdx() << " DieRoll: " << diceRoll << " PieceIdx: " << movePieceIdx << endl << endl;
             }
 
             // Save the state
@@ -98,6 +103,10 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
                 if (VERBOSE) {
                     cout << playerTurn << " won in " << iteration << " iterations " << endl;
                 }
+                    // Set the ready flag to zero,
+                for (auto p: Players){
+                    p->GamePlayed();
+                }
                 return Players[playerTurn]->getPlayerIdx();
             }
 
@@ -108,7 +117,7 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
         }
     }
         // Should get here!
-    cout << "Shouldn't get here "<< endl;
+    cout << "Shouldn't get here. Check Iterator count: iteration_max = " << iteration_max << endl;
     // Close the file
     if (saveReplay)
         myfile.close();
@@ -125,23 +134,23 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
 int Game::PlayerMove(const int &playerIdx, const int &PieceIdx, const int &diceRoll){
     switch(diceRoll) {
         case DIE_GLOBUS:
-            HandleGlobus(playerIdx, PieceIdx);
+            return HandleGlobus(playerIdx, PieceIdx);
             break;
         case DIE_STAR:
-            HandleStar(playerIdx, PieceIdx);
+            return HandleStar(playerIdx, PieceIdx);
             break;
         case DIE_SIX:
-            HandleSix(playerIdx, PieceIdx);
+            return HandleSix(playerIdx, PieceIdx);
             break;
         default:    // normal move
-            HandleNormal(playerIdx, PieceIdx, diceRoll);
+            return HandleNormal(playerIdx, PieceIdx, diceRoll);
     }
     return 0;
 }
 
 /**
- * Function to handle a globus roll. When then the function is called, the player class should have picked a playable
- * piece - that is, a piece not past the last globus.
+ * Function to handle a globus roll.
+ * An invalied move is the player pick a pieces past or on the last globus.
  * A Enemy is only safe it he is on a safe globus, otherwise is he send home.
  * @param playerIdx
  * @param movePieceIdx
@@ -151,7 +160,7 @@ int Game::HandleGlobus(const int &playerIdx, const int &movePieceIdx) {
     int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
     // The piece is past the last globus
-    if (posCur > POS_LAST_GLOBUS) {
+    if (posCur >= POS_LAST_GLOBUS) {
         return 0;
     }
 
@@ -191,9 +200,8 @@ int Game::HandleGlobus(const int &playerIdx, const int &movePieceIdx) {
 }
 
 /**
- * Function to handle a star roll. When then the function is called, the player class should have picked a playable
- * piece - that is, a piece not past the last star and not in the home position.
- * A enemy piece is only send home if he is at the end star.
+ * Function to handle a star roll. An invalied moce is when a player pick a piecs past of on the last star and at the home position.
+ * A enemy piece is only send home if he is at the end star, not a the intermediate start.
  * @param playerIdx
  * @param movePieceIdx
  * @return return true if the player were able to move
@@ -205,7 +213,7 @@ int Game::HandleStar(const int playerIdx, const int movePieceIdx){
     if (posCur >= POS_LAST_STAR || posCur == HOME_POSITION){
         return 0;
     }
-        // Find the next start and jump
+        // Find the next star and jump
     for (int i = 0; i < N_STAR; i++) {
             // Check the next Star position
         if (posCur < POS_STAR[i]) {
@@ -213,7 +221,7 @@ int Game::HandleStar(const int playerIdx, const int movePieceIdx){
             if (POS_STAR[i] == POS_LAST_STAR) {
                 MovePiece(playerIdx, movePieceIdx, GOAL_POSITION);
             }
-                // Move to the next start and jump
+                // Move to the next star and jump
             else {
                 int posStar = POS_STAR[i + 1]; // End posistion
 
@@ -233,8 +241,8 @@ int Game::HandleStar(const int playerIdx, const int movePieceIdx){
 }
 
 /**
- * Function to handle a Six roll. When then the function is called.
- * If the peice is at the home position it should move out, otherwise it should act like a normal dice roll
+ * Function to handle a Six roll. When then the function is called. If the peice is at the home position it should move
+ * out, otherwise it should act like a normal dice roll
  * @param playerIdx
  * @param movePieceIdx
  * @return return true if the player were able to move
@@ -260,6 +268,15 @@ int Game::HandleSix(const int &playerIdx, const int &movePieceIdx){
     return HandleNormal(playerIdx, movePieceIdx, DIE_SIX);
 }
 
+/**
+ * Handle every normal dice roll. An invalid move is when the piece is at the home position.
+ * When the player land on a star, he jumps and an enemy piece is only send home if he is at the end star,
+ * not a the intermediate start.
+ * @param playerIdx
+ * @param movePieceIdx
+ * @param dieRoll
+ * @return
+ */
 int Game::HandleNormal(const int &playerIdx, const int &movePieceIdx, const int &dieRoll) {
     int posCur = Players[playerIdx]->getPiecePositions()[movePieceIdx];
 
@@ -281,7 +298,7 @@ int Game::HandleNormal(const int &playerIdx, const int &movePieceIdx, const int 
     else {
         int posNew = posCur + dieRoll;
             // Check if the new position is a start
-        for (int i =0; i < N_STAR; i++ ){
+        for (int i = 0; i < N_STAR; i++ ){
                 // If true, set posNew accordingly
             if (posNew == POS_STAR[i]){
                     // If its the last star, then move the piece to goal
@@ -290,6 +307,7 @@ int Game::HandleNormal(const int &playerIdx, const int &movePieceIdx, const int 
                     return 0;
                 } else {
                     posNew = POS_STAR[i+1];
+                    break;
                 }
             }
         }
@@ -401,7 +419,6 @@ void Game::HandleCollision(const int &playerIdx, const int &movePieceIdx, const 
 }
 
 
-
 /**
  * Send home the piece
  * @param playerIdx
@@ -460,10 +477,12 @@ int Game::FindEnemyIdx(const int &playerIdx, const int &postIdx) {
  * @param playerIdx The current player
  * @param enemyPosition The positions given relative the the current player
  */
-void Game::FindEnemyPos(const int &playerIdx, std::array<int, 4*(N_PLAYERS-1)> &enemyPosition){
+void Game::FindEnemyPos(const int &playerIdx, enemyPiecePos &enemyPosition){
     int i = 0;
+    //cout << playerIdx << endl;
     for(int enemy = 1; enemy < N_PLAYERS; enemy++){
         int enemyIdx = FindEnemyIdx(playerIdx, enemy);
+        //cout << enemyIdx << " ";
         for (auto piecesPos : Players[enemyIdx]->getPiecePositions() ){
                 // Check if they are in unreachable place
             if (piecesPos >= GOAL_AREA_START || piecesPos == HOME_POSITION){
@@ -471,10 +490,13 @@ void Game::FindEnemyPos(const int &playerIdx, std::array<int, 4*(N_PLAYERS-1)> &
             } else {
                 enemyPosition[i + (4 * (enemy-1))] = LUT[piecesPos][N_PLAYERS-enemy];
             }
+            //cout << piecesPos << " -> " << enemyPosition[i + (4 * (enemy-1))] << " | ";
             i +=1;
         }
         i = 0;
+        //cout << endl;
     }
+    //cout << endl;
 }
 
 
@@ -492,4 +514,5 @@ void Game::WriteStateToFile(const int &playerIdx, const int &dieRoll, const int 
     }
     output += '\n';
     fout << output;
+    cout << output << endl;
 }

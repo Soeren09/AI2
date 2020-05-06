@@ -55,7 +55,7 @@ public:
     int BoardCollisionCheck(const int &playerIdx, const int &PosBoard, collision &pieceCollision);
     void HandleCollision(const int &playerIdx, const int &movePieceIdx, const int &PosBoard, collision &pieceCollision, const int &type);
     int FindEnemyIdx(const int &playerIdx, const int &postIdx);
-    void FindEnemyPos(const int &playerIdx, std::array<int, 4*(N_PLAYERS-1)> &enemyPosition);
+    void FindEnemyPos(const int &playerIdx, enemyPiecePos &enemyPosition);
 
     void WriteStateToFile(const int &playerIdx, const int &dieRoll, const int &pieceIdx, std::ofstream &fout);
 

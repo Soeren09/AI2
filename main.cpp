@@ -8,36 +8,44 @@
 #include "Parameters.h"
 
 #include "PlayerRandom.h"
+#include "PlayerAC.h"
 
 using namespace std;
 
 
 int main() {
-    // There is a VERBOSE flag in Parameters.h
+    // Generate players    // There is a VERBOSE flag in Parameters.h
+    ////    for (auto row : REWARD_TABLE){
+    ////        for (auto element : row) {
+    ////            cout << element << " ";
+    ////        }
+    ////        cout << endl;
+    ////    }
+    ////    cout << endl;
 
-
-    // Generate players
     PlayerRandom p1(0, std::array<int,4>{0,0,0,0}  );
     PlayerRandom p2(1, std::array<int,4>{0,0,0,0}  );
     PlayerRandom p3(2, std::array<int,4>{0,0,0,0}  );
     PlayerRandom p4(3, std::array<int,4>{0,0,0,0}  );
 
+    PlayerAC p5(4, std::array<int,4>{0,0,0,0}  );
+
 
     int itt = 1;    // Breaks the txt file (only do one itr)
     int time[itt];
-    array<int, 4> winners = {0,0,0,0};
+    array<int, 5> winners = {0,0,0,0, 0};
     for (int i = 0; i< itt; i++)
     {
             // Make sure the players are at home position
-        p1.Reset(); p2.Reset(); p3.Reset(); p4.Reset();
+        //p1.Reset(); p2.Reset(); p3.Reset(); p4.Reset(); p5.Reset();
 
             // Start game
         auto start = chrono::high_resolution_clock::now();
 
-        Game Board = Game(p1, p2, p3, p4);
-        //Game Board = Game();
-        //winners[Board.Run(false, "ludoReplay.txt")] += 1;
+        //Game Board = Game(p1, p2, p3, p4);
+        Game Board = Game(p5, p2, p3, p4);
         winners[Board.Run(false, "ludoReplay.txt")] += 1;
+        //winners[Board.Run(true, "ludoReplay.txt")] += 1;
 
         auto stop = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
@@ -45,11 +53,12 @@ int main() {
         time[i] = duration.count();
 
             // Update players
-
+        // TODO Update the network
 
             // Keep track of games
         if (!(i%10000)){
             cout << i << "/" << itt << endl;
+            //cout << duration.count() << " microseconds" << endl;
         }
     }
 
@@ -67,6 +76,7 @@ int main() {
     cout << "PLayer 1 won " << winners [1] << " times." <<endl;
     cout << "PLayer 2 won " << winners [2] << " times." <<endl;
     cout << "PLayer 3 won " << winners [3] << " times." <<endl;
+    cout << "PLayer 4 won " << winners [4] << " times." <<endl;
 
     return 0;
 }
