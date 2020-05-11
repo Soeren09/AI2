@@ -30,18 +30,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bd5eba76-37f5-4855-8893-f896f7e98edd" name="Default Changelist" comment="Prepared for reinforcement learning">
-      <change afterPath="$PROJECT_DIR$/ActorCriticParameters.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Network.h" afterDir="false" />
+    <list default="true" id="7f3f4200-5131-4d21-9ce6-9517e7db3c99" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Parameters.h" beforeDir="false" afterPath="$PROJECT_DIR$/Parameters.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Network.h" beforeDir="false" afterPath="$PROJECT_DIR$/Network.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PlayerAC.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerAC.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PlayerAC.h" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerAC.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PlayerBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PlayerRandom.h" beforeDir="false" afterPath="$PROJECT_DIR$/PlayerRandom.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,25 +49,29 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="1ac2hI7iIzesK3ojdKD68NlVHX1" />
+  <component name="ProjectId" id="1biTleixlSaMIkio5DGp5v5ZciJ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Ludo-help-for-tools-of-AI" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/CMakeLists.txt" />
     <property name="settings.editor.selected.configurable" value="CMakeSettings" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-    </key>
   </component>
   <component name="RunManager">
     <configuration name="AI" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="AI" TARGET_NAME="AI" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="AI" RUN_TARGET_NAME="AI">
@@ -85,53 +85,15 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bd5eba76-37f5-4855-8893-f896f7e98edd" name="Default Changelist" comment="" />
-      <created>1587020678657</created>
+      <changelist id="7f3f4200-5131-4d21-9ce6-9517e7db3c99" name="Default Changelist" comment="" />
+      <created>1589114277057</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1587020678657</updated>
-      <workItem from="1587020680119" duration="266000" />
-      <workItem from="1587021006445" duration="17601000" />
-      <workItem from="1587132029188" duration="4432000" />
-      <workItem from="1587233246648" duration="7529000" />
-      <workItem from="1587638034826" duration="18223000" />
-      <workItem from="1587885219332" duration="15801000" />
-      <workItem from="1588141272520" duration="13149000" />
-      <workItem from="1588156597429" duration="14391000" />
-      <workItem from="1588329403164" duration="8403000" />
-      <workItem from="1588508089762" duration="12511000" />
-      <workItem from="1588659403234" duration="26510000" />
-      <workItem from="1588749186476" duration="860000" />
+      <updated>1589114277057</updated>
+      <workItem from="1589114279471" duration="39000" />
+      <workItem from="1589114319131" duration="4112000" />
+      <workItem from="1589180573831" duration="17839000" />
     </task>
-    <task id="LOCAL-00001" summary="Added git to Clion">
-      <created>1588152867989</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1588152867989</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Added git to Clion">
-      <created>1588166202364</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1588166202364</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Prepared for reinforcement learning">
-      <created>1588342546785</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1588342546785</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Prepared for reinforcement learning">
-      <created>1588342862250</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1588342862250</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,99 +111,54 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added git to Clion" />
-    <MESSAGE value="Prepared for reinforcement learning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Prepared for reinforcement learning" />
-  </component>
   <component name="WindowStateProjectService">
-    <state x="2373" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588142759696">
+    <state x="2373" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589114332822">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2373" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588142759696" />
-    <state x="2677" y="259" width="475" height="569" key="#com.intellij.ide.util.MemberChooser" timestamp="1587650034254">
+    <state x="2373" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589114332822" />
+    <state x="2698" y="298" width="424" height="491" key="FileChooserDialogImpl" timestamp="1589114314246">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2677" y="259" width="475" height="569" key="#com.intellij.ide.util.MemberChooser/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1587650034254" />
-    <state x="2090" y="100" width="1650" height="880" key="DiffContextDialog" timestamp="1588154512242">
+    <state x="2698" y="298" width="424" height="491" key="FileChooserDialogImpl/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589114314246" />
+    <state width="1804" height="519" key="GridCell.Tab.0.bottom" timestamp="1589206966021">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2090" y="100" width="1650" height="880" key="DiffContextDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588154512242" />
-    <state x="2698" y="301" width="424" height="491" key="FileChooserDialogImpl" timestamp="1588161741249">
+    <state width="1804" height="519" key="GridCell.Tab.0.bottom/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589206966021" />
+    <state width="1804" height="519" key="GridCell.Tab.0.center" timestamp="1589206966021">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2698" y="301" width="424" height="491" key="FileChooserDialogImpl/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588161741249" />
-    <state width="1804" height="245" key="GridCell.Tab.0.bottom" timestamp="1588749294838">
+    <state width="1804" height="519" key="GridCell.Tab.0.center/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589206966021" />
+    <state width="1804" height="519" key="GridCell.Tab.0.left" timestamp="1589206966021">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="245" key="GridCell.Tab.0.bottom/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588749294838" />
-    <state width="1804" height="245" key="GridCell.Tab.0.center" timestamp="1588749294838">
+    <state width="1804" height="519" key="GridCell.Tab.0.left/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589206966021" />
+    <state width="1804" height="519" key="GridCell.Tab.0.right" timestamp="1589206966021">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="245" key="GridCell.Tab.0.center/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588749294838" />
-    <state width="1804" height="245" key="GridCell.Tab.0.left" timestamp="1588749294838">
+    <state width="1804" height="519" key="GridCell.Tab.0.right/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589206966021" />
+    <state width="1804" height="351" key="GridCell.Tab.1.bottom" timestamp="1589186632671">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="245" key="GridCell.Tab.0.left/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588749294838" />
-    <state width="1804" height="245" key="GridCell.Tab.0.right" timestamp="1588749294838">
+    <state width="1804" height="351" key="GridCell.Tab.1.bottom/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589186632671" />
+    <state width="1804" height="351" key="GridCell.Tab.1.center" timestamp="1589186632671">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="245" key="GridCell.Tab.0.right/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588749294838" />
-    <state width="1804" height="409" key="GridCell.Tab.1.bottom" timestamp="1588700748460">
+    <state width="1804" height="351" key="GridCell.Tab.1.center/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589186632671" />
+    <state width="1804" height="351" key="GridCell.Tab.1.left" timestamp="1589186632671">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="409" key="GridCell.Tab.1.bottom/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588700748460" />
-    <state width="1804" height="409" key="GridCell.Tab.1.center" timestamp="1588700748460">
+    <state width="1804" height="351" key="GridCell.Tab.1.left/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589186632671" />
+    <state width="1804" height="351" key="GridCell.Tab.1.right" timestamp="1589186632671">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="409" key="GridCell.Tab.1.center/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588700748460" />
-    <state width="1804" height="409" key="GridCell.Tab.1.left" timestamp="1588700748460">
+    <state width="1804" height="351" key="GridCell.Tab.1.right/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589186632671" />
+    <state x="2404" y="175" width="1022" height="737" key="SettingsEditor" timestamp="1589114383618">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="409" key="GridCell.Tab.1.left/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588700748460" />
-    <state width="1804" height="409" key="GridCell.Tab.1.right" timestamp="1588700748460">
+    <state x="2404" y="175" width="1022" height="737" key="SettingsEditor/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589114383618" />
+    <state x="2578" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1589188096473">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1804" height="409" key="GridCell.Tab.1.right/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588700748460" />
-    <state width="640" height="204" key="ImportCMakeProjectWizard.bottomPanel" timestamp="1588161744886">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state width="640" height="204" key="ImportCMakeProjectWizard.bottomPanel/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588161744886" />
-    <state width="640" height="476" key="ImportCMakeProjectWizard.topPanel" timestamp="1588161744886">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state width="640" height="476" key="ImportCMakeProjectWizard.topPanel/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588161744886" />
-    <state x="2737" y="223" width="345" height="640" key="RollbackChangesDialog" timestamp="1588156726813">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2737" y="223" width="345" height="640" key="RollbackChangesDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588156726813" />
-    <state x="2404" y="175" width="1022" height="737" key="SettingsEditor" timestamp="1588142774130">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2404" y="175" width="1022" height="737" key="SettingsEditor/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588142774130" />
-    <state x="2510" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2" timestamp="1588342872187">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2510" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588342872187" />
-    <state x="2521" y="153" width="778" height="780" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1588691716357">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2521" y="153" width="778" height="780" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588691716357" />
-    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588342821423">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2686" y="455" width="458" height="177" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588342821423" />
-    <state x="2612" y="328" width="595" height="430" key="git4idea.merge.GitPullDialog" timestamp="1588152846303">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2612" y="328" width="595" height="430" key="git4idea.merge.GitPullDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588152846303" />
-    <state x="2694" y="325" width="432" height="436" key="refactoring.ChangeSignatureDialog" timestamp="1588165410835">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2694" y="325" width="432" height="436" key="refactoring.ChangeSignatureDialog/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588165410835" />
-    <state x="2579" y="245" key="run.anything.popup" timestamp="1588516417963">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2579" y="245" key="run.anything.popup/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1588516417963" />
+    <state x="2578" y="239" width="672" height="678" key="search.everywhere.popup/70.27.1850.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1589188096473" />
   </component>
 </project>

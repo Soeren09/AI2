@@ -8,6 +8,7 @@
 #include <ctime>    // For time()
 #include <cstdlib>  // For srand() and rand()
 #include "Parameters.h"
+#include <iostream>
 
 class PlayerBase {
 protected:
@@ -101,7 +102,7 @@ int MovablePieces(int &diceRoll){
         }
             // If the pieces is past the last star. This include the whole goal area
         else if (PiecePositions[i] >= POS_LAST_STAR) {
-            if (diceRoll != DIE_STAR || diceRoll != DIE_GLOBUS) {
+            if ( !(diceRoll == DIE_STAR || diceRoll == DIE_GLOBUS )) {
                 MovablePieceIdx[nMoveable]=i;
                 nMoveable += 1;
             }

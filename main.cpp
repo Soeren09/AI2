@@ -10,6 +10,11 @@
 #include "PlayerRandom.h"
 #include "PlayerAC.h"
 
+#include <eigen3/Eigen/Dense>
+
+
+#include "Network.h"
+
 using namespace std;
 
 
@@ -37,7 +42,7 @@ int main() {
     for (int i = 0; i< itt; i++)
     {
             // Make sure the players are at home position
-        //p1.Reset(); p2.Reset(); p3.Reset(); p4.Reset(); p5.Reset();
+        p1.Reset(); p2.Reset(); p3.Reset(); p4.Reset(); p5.Reset();
 
             // Start game
         auto start = chrono::high_resolution_clock::now();

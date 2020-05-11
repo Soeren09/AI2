@@ -12,6 +12,7 @@
 using namespace std;
 
 Game::Game() {
+
     Players[0] = new PlayerRandom(0, std::array<int,4>{0,0,0,0}  );
     Players[1] = new PlayerRandom(1, std::array<int,4>{0,0,0,0}  );
     Players[2] = new PlayerRandom(2, std::array<int,4>{0,0,0,0}  );
@@ -71,9 +72,12 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
         myfile.open(replayPath);
     }
 
-    int iteration_max = 2;
+    int iteration_max = 220;
     for (int iteration = 0; iteration < iteration_max; iteration++)    {
         for (int playerTurn = 0; playerTurn < N_PLAYERS; playerTurn++) {
+            if(VERBOSE) {
+                cout << "New turn ___" << endl;
+            }
             int movePieceIdx = -1, diceRoll = -1;
             enemyPiecePos enemyPos;
             FindEnemyPos(playerTurn, enemyPos);
@@ -81,7 +85,8 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
             if (Players[playerTurn]->MakeDecision(movePieceIdx, diceRoll, enemyPos)) {
                 if ( !PlayerMove(playerTurn, movePieceIdx, diceRoll) ) {  // Not Valid move
                     // TODO Penalize the player
-                    cout << "Player made choose an illegal move." << endl;
+                    cout << "Player " << playerTurn << " made choose an illegal move. Dice: "<< diceRoll << " Moved Piece: " << movePieceIdx  << endl;
+
                 }
                     // Analys the move made
                 Players[playerTurn]->GameAnalysis(movePieceIdx, diceRoll, enemyPos);
@@ -211,6 +216,7 @@ int Game::HandleStar(const int playerIdx, const int movePieceIdx){
 
     // If the piece is past the last star (time 50 nano secounds)
     if (posCur >= POS_LAST_STAR || posCur == HOME_POSITION){
+        cout << "Past last start!" << endl;
         return 0;
     }
         // Find the next star and jump
@@ -304,7 +310,7 @@ int Game::HandleNormal(const int &playerIdx, const int &movePieceIdx, const int 
                     // If its the last star, then move the piece to goal
                 if (POS_STAR[i] == POS_LAST_STAR){
                     MovePiece(playerIdx, movePieceIdx, GOAL_POSITION);
-                    return 0;
+                    return 1;
                 } else {
                     posNew = POS_STAR[i+1];
                     break;

@@ -5,8 +5,10 @@
 #ifndef AI_PLAYERAC_H
 #define AI_PLAYERAC_H
 
+
 #include "PlayerBase.h"
 #include "Parameters.h"
+#include "Network.h"
 #include "ActorCriticParameters.h"
 
 class PlayerAC : public PlayerBase{
@@ -23,6 +25,7 @@ public:
     void SetState(enemyPiecePos &enemyPosition);
     int HostilePosition(int &playerPiecePos, int &enemyPiecePos);
     int Actor (int &diceRoll, enemyPiecePos &enemyPosition);
+    void NormalizeNetworkInputState();
 
 private:
     // The player have three states.
@@ -33,6 +36,14 @@ private:
     actorCriticPieceState StoredState;
 
     actorCriticPieceState PotState;
+
+//    int nState, nHidden, nOutput;
+//    Network<nState, nHiddenm nOutput> ActorCritic;
+
+
+    Eigen::Matrix<int, 20, 1> NetworkInputState;
+    //Network<20, 2*20+1, 4> ActorCritic;
+    Network<20, 2, 4, 10> ActorCritic;
 
     int Reward;
 };

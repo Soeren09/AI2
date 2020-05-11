@@ -28,11 +28,6 @@ int PlayerAC::MakeDecision(int &movePieceIdx, int &diceRoll, enemyPiecePos &enem
     UpdateState(enemyPosition);
         // TODO Right now the is no penalty when a piece dies
 
-    for (int i = 0; i < 4; i ++){
-        cout << PiecePositions[i] << " | " << CurState[i] << " || ";
-    }
-    cout << endl;
-
     // ########################### Start round ##############################################
         // Roll the dice
     diceRoll = RollDie();
@@ -40,29 +35,37 @@ int PlayerAC::MakeDecision(int &movePieceIdx, int &diceRoll, enemyPiecePos &enem
         // Check to see which pieces are moveable
     nMovable = MovablePieces(diceRoll);
 
+
         // If the player is unable to move, skip turn
     if (nMovable == 0) {
         return 0;
     }
-    // TODO Fix actor
-    Actor(diceRoll, enemyPosition);
 
-    switch(diceRoll) {
-        case DIE_GLOBUS:
-            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
-            break;
-        case DIE_STAR:
-            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
-            break;
-        case DIE_SIX:
-            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
-            break;
-        default:    // normal move
-            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
-    }
+        // Convert the current state to a input state to the Actor/Critic Network
+    NetworkInputState.block(0,0,4,1) = Eigen::Matrix<int,4,1>(CurState.data());
+    NetworkInputState.block(4,0,4,1) = Eigen::Matrix<int,4,1>(PiecePositions.data());
+    NetworkInputState.block(8,0,12,1) = Eigen::Matrix<int,12,1>(enemyPosition.data());
+
+    movePieceIdx = ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
 
         // Store the state
     StoreState();
+    return 1;
+
+
+//    switch(diceRoll) {
+//        case DIE_GLOBUS:
+//            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
+//            break;
+//        case DIE_STAR:
+//            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
+//            break;
+//        case DIE_SIX:
+//            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
+//            break;
+//        default:    // normal move
+//            movePieceIdx = MovablePieceIdx[(rand() % nMovable)];
+//    }
 
     return 1;
 }
@@ -72,6 +75,9 @@ void PlayerAC::GameAnalysis(int &movePieceIdx, int &diceRoll, enemyPiecePos &ene
     UpdateState(enemyPosition);
     // Get the reward
     GetReward();
+
+    ActorCritic.Critic(2);
+
     // Store the state
     StoreState();
 }
@@ -88,19 +94,77 @@ void PlayerAC::GetReward() {
 }
 
 /**
- * This is the actor network. The actor should select an appropiate action
+ * This is the actor network. The actor should select an appropiate action.
+ * The state of the environment is the current state of player piece and position of all the piece on the table.
+ * This function is only called when a piece is able to move
  * @param diceRoll
  * @param enemyPosition
  * @return
  */
 int PlayerAC::Actor(int &diceRoll, enemyPiecePos &enemyPosition) {
-//        for (auto p : enemyPosition) {
-//            cout << p << " ";
-//        }
-//        cout << endl;
 
-    return 0;
+    NetworkInputState.block(0,0,4,1) = Eigen::Matrix<int,4,1>(CurState.data());
+    NetworkInputState.block(4,0,4,1) = Eigen::Matrix<int,4,1>(PiecePositions.data());
+    NetworkInputState.block(8,0,12,1) = Eigen::Matrix<int,12,1>(enemyPosition.data());
+
+
+    auto y = ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
+    cout << "Decision; " << y << std::endl;
+    ActorCritic.UpdateWeights();
+    return y;
+//    return ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
+
+//    return MovablePieceIdx[(rand() % nMovable)];
+
+//    cout << endl;
+//    cout << "MovablePiece: ";
+//    for (auto p : MovablePieceIdx)
+//        cout << p << " ";
+//
+//        cout << endl << " Softmax: ";
+//    for (int i = 0; i< y.size(); i++)
+//        cout << y[i]<< " ";
+
+//    if ( isnan(y[0])){
+//        cout << "Nan detected return random" << endl;
+//        return MovablePieceIdx[(rand() % nMovable)];
+//    }
+//
+//    // Get max probability
+//    float max = 0;
+//    std::array<int,4> max_idxs;
+//    int nMax_idxs = 0;
+//
+//        // Find the piece with the highes probability, given that it is able to move.
+//    for (int i = 0; i < nMovable; i++){
+//            // Check if the current value is greater than the current max
+//        if (y[MovablePieceIdx[i] ] > max) {
+//            max = y[MovablePieceIdx[i] ];
+//            nMax_idxs = 0;
+//            max_idxs[nMax_idxs++] = MovablePieceIdx[i];
+//        }   // Check the current value is equal to the max value
+//        else if (y[MovablePieceIdx[i] ] == max){
+//                // Add the value to the max list
+//            max_idxs[nMax_idxs++] = MovablePieceIdx[i];
+//        }
+//    }
+//
+//
+////    cout << endl << "nMax_idxs: " << nMax_idxs << " max_idxs: ";
+////    for (auto p : max_idxs)
+////        cout << p << " ";
+////
+////    cout << endl;
+////    cout << "Select: " << max_idxs[ rand()%nMax_idxs ] << endl;
+////
+////    cout << "End actor " << endl;
+//
+//        // Return the piece to moce
+//    //return max_idxs[ rand()%nMax_idxs ];
+//    return MovablePieceIdx[(rand() % nMovable)];
 }
+
+
 
 /**
  * Save the state from last round, NewState, to the state of this round, CurState.
@@ -268,69 +332,3 @@ int PlayerAC::HostilePosition(int &playerPiecePos, int &enemyPiecePos) {
     }
     return 0;
 }
-
-
-
-//void PlayerAC::UpdateState(enemyPiecePos &enemyPosition) {
-//    // Save the states
-//    CurState[0] = NewState[0];
-//    CurState[1] = NewState[1];
-//    CurState[2] = NewState[2];
-//    CurState[3] = NewState[3];
-//
-//    // Check the threat from each enemy - Only valid if the piece is not at HOME, GOAL or SAFE position
-//    int nPossibleDangerPieces = 0;
-//    array<int,4> possibleDangerPieceIdx;
-//    for (int idx = 0; idx < 4; idx ++){
-//        if (CurState[ idx ] != STATE_HOME && CurState[ idx ] != STATE_GOAL && CurState[ idx ] != STATE_SAFE ){
-//            // Set the default state to neutral;
-//            CurState[ idx ] = STATE_NEUTRAL;
-//            possibleDangerPieceIdx[nPossibleDangerPieces] = idx;
-//            nPossibleDangerPieces += 1;
-//        }
-//    }
-//    // If all player pieces are at a safe location, skip the state update.
-//    if (nPossibleDangerPieces == 0) {
-//        return;
-//    }
-//
-//    // Loop through every enemy position and check if it is threathening a pieces
-//    for (auto enemyPos : enemyPosition){
-//        // Check if the piece is not at a unreachable location - home of goal area
-//        if (enemyPos != UNREACHABLE_POSITION){
-//            // Check the enemy position against every player position
-//            for (int i = 0; i < nPossibleDangerPieces; i ++){
-//                // Skip the pieces that are already at a hostile position
-//                if (CurState[ possibleDangerPieceIdx[i] ] != STATE_HOSTILE){
-//                    // Check if the piece is at a hostile position
-//                    int currentPiecePosition = PiecePositions[ possibleDangerPieceIdx[i] ];
-//                    if (HostilePosition(currentPiecePosition, enemyPos) ) {
-//                        CurState[ possibleDangerPieceIdx[i] ] = STATE_HOSTILE;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//
-
-
-///**
-// * Check if a piece were killed because
-// * @return
-// */
-//int PlayerAC::GetReward() {
-//    // TODO Is is fair to update for a killed piece?
-//    // Check to see if a piece were killed during the past round
-//    for (int i = 0; i < PiecePositions.size(); i++){
-//        if (PiecePositions[i] == HOME_POSITION){
-//            NewState[i] = STATE_HOME;
-//        }
-//    }
-//    // Calculate rewards
-//    int reward = 0;
-//    for ( int i = 0; i < 4; i ++){
-//        reward += REWARD_TABLE[CurState[i]][NewState[i]];
-//    }
-//    return reward;
-//}
