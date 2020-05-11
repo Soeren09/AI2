@@ -41,7 +41,7 @@ private:
     // Hidden neuron synaptic input
     Eigen::Matrix<double, nHidden, 1> z; //  z = W^T*x + b
     // Hidden output, input to next layer
-    Eigen::Matrix<double, nHidden, 1> h; //  h = f(z)
+    Eigen::Matrix<double, nHidden, 1> h; //  h = g(z)
 
     // Output weight and bias
     Eigen::Matrix<double, nHidden, nOutput> V;
@@ -60,23 +60,27 @@ private:
     double Delta;      // reward + Gamma*Vx - Vx_old;
 
         // Network
-    Eigen::Matrix<double, nInput, nRBF> RBFin;
     Eigen::Matrix<double, nRBF, 1> RBFout;
+    Eigen::Matrix<double, nRBF, 1> y_j;
     Eigen::Matrix<double, nRBF, nInput> Mean;
+    Eigen::Matrix<double, nRBF, 1> Beta;
     //Eigen::Matrix<double, nRBF, nInput> S_1; // covariance S⁻1
     // 1/(2*sigma^2), sigma = 1/points * sum(|x-mu|): https://mccormickml.com/2013/08/15/radial-basis-function-network-rbfn-tutorial/
-    Eigen::Matrix<double, nRBF, 1> Beta;
+
 
 public:
+
+    Eigen::Matrix<double, nRBF, 1> RBFcount;
+
     Network();
     void read_record();
 
     int Actor(Eigen::Matrix<int, nInput,1> &x_, const int &nMovable, const std::array<int, 4> &MovablePieceIdx);
-    void Critic(int reward);
-
+    void Critic(int &reward);
     void UpdateWeights();
 
     void NormalizeNetworkInputState();
+
         // Help functions Actor
     void SoftMax(Eigen::Matrix<double,nOutput, 1> &x, Eigen::Matrix<double, nOutput, 1> &y) ;
     void ReLu(Eigen::Matrix<double, nHidden, 1> &x, Eigen::Matrix<double, nHidden, 1> &y);
@@ -84,6 +88,8 @@ public:
 
         // Help functions Critic
     double GaussianKernel(const Eigen::Matrix<double, nInput, 1> &x_, const Eigen::Matrix<double, nInput, 1> &mean_, const double &beta_);
+
+    void StoreWeights();
 
 };
 
@@ -95,14 +101,15 @@ Network<nInput, nHidden, nOutput, nRBF>::Network() {
     generator.seed(time(0));
 
     // Initialize Actor network
-    W = Eigen::Matrix<double, nInput, nHidden>::Zero();
-    b = Eigen::Matrix<double, nHidden, 1>::Zero();
+    W = Eigen::Matrix<double, nInput, nHidden>::Random();
+    b = Eigen::Matrix<double, nHidden, 1>::Random();
 
-    V = Eigen::Matrix<double, nHidden, nOutput>::Zero();
-    c = Eigen::Matrix<double, nOutput, 1>::Zero();
+
+    V = Eigen::Matrix<double, nHidden, nOutput>::Random();
+    c = Eigen::Matrix<double, nOutput, 1>::Random();
 
     // Initialize Critic network
-    RBFin = Eigen::Matrix<double, nInput, nRBF>::Ones();
+    RBFcount = Eigen::Matrix<double, nRBF, 1>::Random();
     read_record();
 
     // Initialize learning parameters
@@ -112,8 +119,8 @@ Network<nInput, nHidden, nOutput, nRBF>::Network() {
 
     Gamma = 0.95;
     ExplorationScaling = 5.0;
-    V_max = 1;
-    V_min = 0;
+    V_max = 69;
+    V_min = -30;
 }
 
 /**
@@ -127,12 +134,12 @@ int Network<nInput, nHidden, nOutput, nRBF>::Actor(Eigen::Matrix<int, nInput,1> 
     x = x_.template cast<double> ();
     //NormalizeNetworkInputState();
 
-    // ** Save normalized states **
-    std::string output = "";
-    char filename[ ] = "States.csv";
-    std::fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
-
-
+//    // ** Save normalized states **
+//    std::string output = "";
+//    char filename[ ] = "States_4.csv";
+//    std::fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+//
+//
 //    //std::cout<< "------" << std::endl << x.transpose() << "  size: "<< x.size() << std::endl;
 //    if (uidlFile.is_open())
 //        for(int i = 0; i < x.size(); i++){
@@ -192,32 +199,56 @@ int Network<nInput, nHidden, nOutput, nRBF>::Actor(Eigen::Matrix<int, nInput,1> 
     return Decision;
 }
 
-
+/**
+ * Calculate the estimated error: Delta, based on a RBF network
+ * @tparam nInput
+ * @tparam nHidden
+ * @tparam nOutput
+ * @tparam nRBF
+ * @param reward
+ */
 template<int nInput, int nHidden, int nOutput, int nRBF>
-void Network<nInput, nHidden, nOutput, nRBF>::Critic(int reward){
-
-    //std::cout << "x:\n " << x << std::endl;
-    //std::cout << "mu:\n " << Mean.row(0) << std::endl;
+void Network<nInput, nHidden, nOutput, nRBF>::Critic(int &reward){
 
 
-    //std::cout << "x-mu:\n" << (x-(Mean.row(0)).transpose()) << std::endl;
-    //std::cout << "|x-mu|:\n"  << (x-(Mean.row(0)).transpose()).norm() << std::endl;
-
-    //auto x_mu = (x-(Mean.row(0)).transpose());
-    //std::cout << " ___________ " << std::endl;
-
-    int i = 0;
     for (int i = 0; i < nRBF; i++){
-        auto a_j = GaussianKernel(x, Mean.row(i), Beta(i));
-        //std::cout << a_j << " ";
+        y_j(i) = GaussianKernel(x, Mean.row(i), Beta(i));
+            //if (a_(i) > 0.001)
+            //std::cout << "i= " << i << " " << a_(i) << " ";
     }
+    //    int max_idx = 0;
+    //    double max = 0;
+    //    for (int i = 0; i < y_.size(); i++){
+    //        if (y_(i) > max){
+    //            max_idx = i;
+    //            max = y_(i);
+    //        }
+    //    }
+    //    RBFcount(max_idx) +=1;
 
-    std::cout << std::endl;
-    //Vx_old = Vx;
-        // Delta(t) = r(t) + gamma* V(x(t)) - V(x(t-1))
-    //Delta = reward + Gamma*Vx - Vx_old;
+
+        // y(x(t)) = a_j(x(t)) / sum(a_(x(t))
+    y_j = y_j/ y_j.sum();
+
+    Vx_old = Vx;
+    Vx = RBFout.transpose() * y_j;
+    // Delta(t) = r(t) + gamma* V(x(t)) - V(x(t-1))
+    Delta = reward + Gamma*Vx - Vx_old;
+
+    //std::cout << "Delta: " << Delta << std::endl;
 }
 
+/**
+ * Calculate the Gausian kernel given the state x, the centroid and the beta value
+ * @tparam nInput
+ * @tparam nHidden
+ * @tparam nOutput
+ * @tparam nRBF
+ * @param x_
+ * @param mean_
+ * @param beta_
+ * @return
+ */
 template<int nInput, int nHidden, int nOutput, int nRBF>
 double
 Network<nInput, nHidden, nOutput, nRBF>::GaussianKernel(
@@ -226,18 +257,11 @@ Network<nInput, nHidden, nOutput, nRBF>::GaussianKernel(
         const double &beta_){
 
 
-    std::cout << "Beta:\n " << beta_ <<" x:\n " << x_.transpose() << " Mean:\n " << mean_.transpose() << std::endl;
     double dist_sqare = 0; // = ||s_1 * (x - mu_j)||^2
     for (int i = 0; i < x_.size(); i++){
-        //std::cout << "\nS: " << beta_<< " x: " << x_(i).transpose() << " mu:\n " << mean_(i) << std::endl;
-//        std::cout << "s*(x-mu): " << (S_1(0,i) * (x(i) - Mean(0,i))) << std::endl;
-        std::cout << "Dist: " << pow(x_(i) - mean_(i), 2) << std::endl;
-        //dist+= (S_1_(i) * (x_(i) - mean_(i))) * (S_1_(i) * (x(i) - mean_(i))) ;
         dist_sqare+= pow(x_(i) - mean_(i), 2);
     }
-    std::cout << "dist sqar "<<dist_sqare << " " << beta_*dist_sqare << " " << exp(-beta_*dist_sqare) << std::endl;
 
-    //return 0;
     return exp(-beta_*dist_sqare);
 }
 
@@ -252,27 +276,25 @@ Network<nInput, nHidden, nOutput, nRBF>::GaussianKernel(
 template<int nInput, int nHidden, int nOutput, int nRBF>
 void Network<nInput, nHidden, nOutput, nRBF>::UpdateWeights(){
 
+    // Update Actor
     // Update V and c (Softmax layer): Based on https://towardsdatascience.com/policy-based-reinforcement-learning-the-easy-way-8de9a3356083
     Eigen::Matrix<double, nOutput, 1> k = Eigen::Matrix<double, nOutput, 1>::Zero();
     k(Decision,0) = 1;
-    Eigen::Matrix<double, nOutput, 1> nablaJ_u = -(k- y);
-    //std::cout << "K: " << k << " \ny: " << y << "  \nnabla: " << nablaJ_u << std::endl;
+        // delta_0 = Delta * f'(u)
+    Eigen::Matrix<double, nOutput, 1> delta_0 = Delta * (-(k- y) );
+        // delta_1 = U * delta_0 * g'(z)
+    Eigen::Matrix<double, nHidden, 1> delta_1 = (V*delta_0).cwiseProduct(ReLu_deriv(z));
 
-    //V = V - Alpha * Delta * nablaJ_u;
+    V = V - Alpha * h * delta_0.transpose();
+    //std::cout << "V: \n" << h  << std::endl;
+    c = c - Alpha * delta_0;
 
-
-
-
-    // NablaJ = -(1*decision-f(x))
-    // V  <- V - alpha * x * (NablaJ)^T
-    // c <- c- alpha * (NablaJ)
-
-    // NablaJ = ReLu_deriv(x)
-
-    // W  <- W - alpha * x * (NablaJ)^T
-    // b <- b- alpha * (NablaJ)
+    W = W - Alpha * x * delta_1.transpose();
+    c = c - Alpha * delta_0;
 
 
+    // Update Critic
+    RBFout = RBFout - Lambda * Delta *  y_j;
 }
 
 /**
@@ -361,7 +383,7 @@ void Network<nInput, nHidden, nOutput, nRBF>::read_record(){
 
     // Open an existing file
     //fin.open("RBFnormalized.csv", std::ios::in);
-    fin.open("RBF.csv", std::ios::in);
+    fin.open("../RBF_4.csv", std::ios::in);
 
     // Read the Data from the file as String Vector
     std::vector<std::string> row;
@@ -396,89 +418,52 @@ void Network<nInput, nHidden, nOutput, nRBF>::read_record(){
     }
 
     std::cout << "Mean: \n" << Mean << std::endl;
-    std::cout << "Beta: \n" << Beta << std::endl;
+    std::cout << "Beta: \n" << Beta.transpose() << std::endl;
 }
+
+/**
+ * Store the weights to a file
+ * @tparam nInput
+ * @tparam nHidden
+ * @tparam nOutput
+ * @tparam nRBF
+ */
+template<int nInput, int nHidden, int nOutput, int nRBF>
+void Network<nInput, nHidden, nOutput, nRBF>::StoreWeights() {
+//
+//        // ** Save normalized states **
+//    std::string output = "";
+//    char filename[ ] = "Weights.csv";
+//    std::fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+//
+//
+//    W;
+//    b;
+//    V;
+//    c;
+//    RBFout;
+//
+//    //std::cout<< "------" << std::endl << x.transpose() << "  size: "<< x.size() << std::endl;
+//    if (uidlFile.is_open()) {
+//        for (int j = 0; j < W.size(); j++)
+//            std::cout << W(0) << std::endl;
+//            //std::cout << W.row() << std::endl;
+//          //  for (int i = 0; i < (W.row()).size(); i++) {
+//            //    output += std::to_string(W(j,i)) + " ";
+//        }
+//
+//        output += '\n';
+
+        //output += std::to_string()
+}
+
+    //std::cout << std::endl;
+    //    std::cout << output << std::endl;
+        //uidlFile << output;
+        //uidlFile.close();
+    // ****************************
+
+
 
 
 #endif //AI_NETWORK_H
-
-///** TODO Eigen::DenseCoeffsBase<Derived, 1>::Scalar& Eigen::DenseCoeffsBase<Derived, 1>::operator()(Eigen::Index, Eigen::Index), delete CSV and rerun
-// * Read centroid and debiations from the CSV file
-// * @tparam nInput
-// * @tparam nHidden
-// * @tparam nOutput
-// * @tparam nRBF
-// */
-//template<int nInput, int nHidden, int nOutput, int nRBF>
-//void Network<nInput, nHidden, nOutput, nRBF>::read_record()
-//{
-//
-//    // File pointer
-//    std::fstream fin;
-//
-//    // Open an existing file
-//    fin.open("RBFnormalized.csv", std::ios::in);
-//
-//    // Read the Data from the file as String Vector
-//    std::vector<std::string> row;
-//    std::string line, word, temp;
-//
-//    // Read an entire row and store it in a string variable 'line' - Frist row is a mean
-//    int idx = 0;
-//    while ( std::getline(fin, line)) {
-//        row.clear();
-//        //std::getline(fin, line);
-//
-//        // used for breaking words
-//        std::stringstream s(line);
-//
-//        // read every column data of a row and store it in a string variable, 'word'
-//        while (std::getline(s, word, ' ')) {
-//            // add all the column data of a row to a vector
-//            row.push_back(word);
-//        }
-//
-//        // convert string to double for comparision: Store the mean
-//        char* pEnd;
-//        for (int i = 0; i < row.size(); i ++){
-//            double mean_ = std::strtod( row[i].c_str(), &pEnd );
-//            if(mean_ < 0.00001) {// 10^-5
-//                Mean(idx,i) = 0;
-//            } else {
-//                Mean(idx,i) = mean_;
-//            }
-//        }
-//
-//        // ################### variance ##########################
-//        row.clear();
-//        std::getline(fin, line);
-//
-//        // used for breaking words
-//        std::stringstream ss(line);
-//
-//        // read every column data of a row and store it in a string variable, 'word'
-//        while (std::getline(ss, word, ' ')) {
-//            // add all the column data of a row to a vector
-//            row.push_back(word);
-//        }
-//
-//        // convert string to double for comparision: Store the variance
-//        //char* pEnd;
-//
-//        Eigen::Matrix<double, nRBF, nRBF> S; // covariance S⁻1
-//        for (int i = 0; i < row.size(); i ++){
-//            S_1(idx,i) = 1/std::strtof( row[i].c_str(), &pEnd );
-//            // S(i,i) = std::strtof( row[i].c_str(), &pEnd );
-//        }
-//
-//
-//
-//        if (idx > nRBF){
-//            std::cout << "Idx > nRFB" << std::endl;
-//        }
-//        idx += 1;
-//    }
-//
-//    std::cout << "Mean: \n" << Mean << std::endl;
-//    std::cout << "S^-1: \n" << S_1 << std::endl;
-//}

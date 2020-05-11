@@ -20,13 +20,6 @@ using namespace std;
 
 int main() {
     // Generate players    // There is a VERBOSE flag in Parameters.h
-    ////    for (auto row : REWARD_TABLE){
-    ////        for (auto element : row) {
-    ////            cout << element << " ";
-    ////        }
-    ////        cout << endl;
-    ////    }
-    ////    cout << endl;
 
     PlayerRandom p1(0, std::array<int,4>{0,0,0,0}  );
     PlayerRandom p2(1, std::array<int,4>{0,0,0,0}  );
@@ -36,7 +29,7 @@ int main() {
     PlayerAC p5(4, std::array<int,4>{0,0,0,0}  );
 
 
-    int itt = 1;    // Breaks the txt file (only do one itr)
+    int itt = 300000;    // Breaks the txt file (only do one itr)
     int time[itt];
     array<int, 5> winners = {0,0,0,0, 0};
     for (int i = 0; i< itt; i++)
@@ -67,6 +60,7 @@ int main() {
         }
     }
 
+    //p5.ActorCritic.StoreWeights();
 
     int average = 0;
     for (int i = 0; i <itt; i++)
@@ -82,6 +76,8 @@ int main() {
     cout << "PLayer 2 won " << winners [2] << " times." <<endl;
     cout << "PLayer 3 won " << winners [3] << " times." <<endl;
     cout << "PLayer 4 won " << winners [4] << " times." <<endl;
+
+    //cout << p5.ActorCritic.RBFcount << endl;
 
     return 0;
 }

@@ -27,6 +27,9 @@ public:
     int Actor (int &diceRoll, enemyPiecePos &enemyPosition);
     void NormalizeNetworkInputState();
 
+
+
+
 private:
     // The player have three states.
     // CurState     - is the state that the pieces are in at the moment
@@ -35,17 +38,15 @@ private:
     actorCriticPieceState CurState;
     actorCriticPieceState StoredState;
 
-    actorCriticPieceState PotState;
 
-//    int nState, nHidden, nOutput;
-//    Network<nState, nHiddenm nOutput> ActorCritic;
-
-
-    Eigen::Matrix<int, 20, 1> NetworkInputState;
-    //Network<20, 2*20+1, 4> ActorCritic;
-    Network<20, 2, 4, 10> ActorCritic;
 
     int Reward;
+    //Eigen::Matrix<int, 20, 1> NetworkInputState;
+    Eigen::Matrix<int, 4, 1> NetworkInputState;
+    // 90 RBF - lowest count for an activation function for 100 runs was 2
+public:
+    Network<4, 10, 4, 90> ActorCritic;
+
 };
 
 

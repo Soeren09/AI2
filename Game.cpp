@@ -72,7 +72,7 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
         myfile.open(replayPath);
     }
 
-    int iteration_max = 220;
+    int iteration_max = 320;
     for (int iteration = 0; iteration < iteration_max; iteration++)    {
         for (int playerTurn = 0; playerTurn < N_PLAYERS; playerTurn++) {
             if(VERBOSE) {

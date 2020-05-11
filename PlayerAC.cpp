@@ -42,9 +42,11 @@ int PlayerAC::MakeDecision(int &movePieceIdx, int &diceRoll, enemyPiecePos &enem
     }
 
         // Convert the current state to a input state to the Actor/Critic Network
-    NetworkInputState.block(0,0,4,1) = Eigen::Matrix<int,4,1>(CurState.data());
-    NetworkInputState.block(4,0,4,1) = Eigen::Matrix<int,4,1>(PiecePositions.data());
-    NetworkInputState.block(8,0,12,1) = Eigen::Matrix<int,12,1>(enemyPosition.data());
+    //NetworkInputState.block(0,0,4,1) = Eigen::Matrix<int,4,1>(CurState.data());
+    //NetworkInputState.block(4,0,4,1) = Eigen::Matrix<int,4,1>(PiecePositions.data());
+    //NetworkInputState.block(8,0,12,1) = Eigen::Matrix<int,12,1>(enemyPosition.data());
+
+    NetworkInputState = Eigen::Matrix<int,4,1>(CurState.data());
 
     movePieceIdx = ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
 
@@ -76,7 +78,8 @@ void PlayerAC::GameAnalysis(int &movePieceIdx, int &diceRoll, enemyPiecePos &ene
     // Get the reward
     GetReward();
 
-    ActorCritic.Critic(2);
+    ActorCritic.Critic(Reward);
+    ActorCritic.UpdateWeights();
 
     // Store the state
     StoreState();
@@ -93,78 +96,6 @@ void PlayerAC::GetReward() {
     }
 }
 
-/**
- * This is the actor network. The actor should select an appropiate action.
- * The state of the environment is the current state of player piece and position of all the piece on the table.
- * This function is only called when a piece is able to move
- * @param diceRoll
- * @param enemyPosition
- * @return
- */
-int PlayerAC::Actor(int &diceRoll, enemyPiecePos &enemyPosition) {
-
-    NetworkInputState.block(0,0,4,1) = Eigen::Matrix<int,4,1>(CurState.data());
-    NetworkInputState.block(4,0,4,1) = Eigen::Matrix<int,4,1>(PiecePositions.data());
-    NetworkInputState.block(8,0,12,1) = Eigen::Matrix<int,12,1>(enemyPosition.data());
-
-
-    auto y = ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
-    cout << "Decision; " << y << std::endl;
-    ActorCritic.UpdateWeights();
-    return y;
-//    return ActorCritic.Actor(NetworkInputState, nMovable, MovablePieceIdx);
-
-//    return MovablePieceIdx[(rand() % nMovable)];
-
-//    cout << endl;
-//    cout << "MovablePiece: ";
-//    for (auto p : MovablePieceIdx)
-//        cout << p << " ";
-//
-//        cout << endl << " Softmax: ";
-//    for (int i = 0; i< y.size(); i++)
-//        cout << y[i]<< " ";
-
-//    if ( isnan(y[0])){
-//        cout << "Nan detected return random" << endl;
-//        return MovablePieceIdx[(rand() % nMovable)];
-//    }
-//
-//    // Get max probability
-//    float max = 0;
-//    std::array<int,4> max_idxs;
-//    int nMax_idxs = 0;
-//
-//        // Find the piece with the highes probability, given that it is able to move.
-//    for (int i = 0; i < nMovable; i++){
-//            // Check if the current value is greater than the current max
-//        if (y[MovablePieceIdx[i] ] > max) {
-//            max = y[MovablePieceIdx[i] ];
-//            nMax_idxs = 0;
-//            max_idxs[nMax_idxs++] = MovablePieceIdx[i];
-//        }   // Check the current value is equal to the max value
-//        else if (y[MovablePieceIdx[i] ] == max){
-//                // Add the value to the max list
-//            max_idxs[nMax_idxs++] = MovablePieceIdx[i];
-//        }
-//    }
-//
-//
-////    cout << endl << "nMax_idxs: " << nMax_idxs << " max_idxs: ";
-////    for (auto p : max_idxs)
-////        cout << p << " ";
-////
-////    cout << endl;
-////    cout << "Select: " << max_idxs[ rand()%nMax_idxs ] << endl;
-////
-////    cout << "End actor " << endl;
-//
-//        // Return the piece to moce
-//    //return max_idxs[ rand()%nMax_idxs ];
-//    return MovablePieceIdx[(rand() % nMovable)];
-}
-
-
 
 /**
  * Save the state from last round, NewState, to the state of this round, CurState.
@@ -174,7 +105,6 @@ int PlayerAC::Actor(int &diceRoll, enemyPiecePos &enemyPosition) {
  * @param enemyPosition
  */
 void PlayerAC::UpdateState(enemyPiecePos &enemyPosition) {
-
     for (int i = 0; i< 4 ; i++){
         if (PiecePositions[i] == HOME_POSITION ) {
             CurState[i] = STATE_HOME;
