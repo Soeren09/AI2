@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 #include "Game.h"
 #include "Parameters.h"
@@ -27,9 +28,9 @@ int main() {
     PlayerRandom p4(3, std::array<int,4>{0,0,0,0}  );
 
     PlayerAC p5(4, std::array<int,4>{0,0,0,0}  );
+    vector<int> reward;
 
-
-    int itt = 300000;    // Breaks the txt file (only do one itr)
+    int itt = 500;    // Breaks the txt file (only do one itr)
     int time[itt];
     array<int, 5> winners = {0,0,0,0, 0};
     for (int i = 0; i< itt; i++)
@@ -51,6 +52,12 @@ int main() {
         time[i] = duration.count();
 
             // Update players
+        if (!(i%100)){
+            p5.ActorCritic.StoreWeights();
+        }
+        //p5.ActorCritic.StoreWeights();
+        reward.push_back(p5.Reward);
+
         // TODO Update the network
 
             // Keep track of games
@@ -60,7 +67,9 @@ int main() {
         }
     }
 
-    //p5.ActorCritic.StoreWeights();
+    const auto [min, max] = std::minmax_element(begin(reward), end(reward));
+    std::cout << "min = " << *min << ", max = " << *max << '\n';
+
 
     int average = 0;
     for (int i = 0; i <itt; i++)

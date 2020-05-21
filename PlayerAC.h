@@ -27,6 +27,8 @@ public:
     int Actor (int &diceRoll, enemyPiecePos &enemyPosition);
     void NormalizeNetworkInputState();
 
+    void Reset();
+
 
 
 
@@ -40,11 +42,11 @@ private:
 
 
 
-    int Reward;
     //Eigen::Matrix<int, 20, 1> NetworkInputState;
     Eigen::Matrix<int, 4, 1> NetworkInputState;
     // 90 RBF - lowest count for an activation function for 100 runs was 2
 public:
+    int Reward;
     Network<4, 10, 4, 90> ActorCritic;
 
 };

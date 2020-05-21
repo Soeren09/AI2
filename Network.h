@@ -74,6 +74,7 @@ public:
 
     Network();
     void read_record();
+    void SetRBF();
 
     int Actor(Eigen::Matrix<int, nInput,1> &x_, const int &nMovable, const std::array<int, 4> &MovablePieceIdx);
     void Critic(int &reward);
@@ -119,8 +120,8 @@ Network<nInput, nHidden, nOutput, nRBF>::Network() {
 
     Gamma = 0.95;
     ExplorationScaling = 5.0;
-    V_max = 69;
-    V_min = -30;
+    V_max = 243;        // Found by 100000 itr
+    V_min = -87;
 }
 
 /**
@@ -285,12 +286,15 @@ void Network<nInput, nHidden, nOutput, nRBF>::UpdateWeights(){
         // delta_1 = U * delta_0 * g'(z)
     Eigen::Matrix<double, nHidden, 1> delta_1 = (V*delta_0).cwiseProduct(ReLu_deriv(z));
 
+    std::cout << D
+
+    elta << std::endl;
+
     V = V - Alpha * h * delta_0.transpose();
-    //std::cout << "V: \n" << h  << std::endl;
     c = c - Alpha * delta_0;
 
     W = W - Alpha * x * delta_1.transpose();
-    c = c - Alpha * delta_0;
+    b = b - Alpha * delta_1;
 
 
     // Update Critic
@@ -348,6 +352,8 @@ void Network<nInput, nHidden, nOutput, nRBF>::ReLu(Eigen::Matrix<double, nHidden
             } else A(i, j) = (x(i, j));
         }
     }
+    y = A;
+    //std::cout << "x: \n" << x.transpose() << "\ny: \n" << y.transpose() << "\nA:\n" << A.transpose() << std::endl;
 }
 
 /**
@@ -359,8 +365,7 @@ template<int nInput, int nHidden, int nOutput, int nRBF>
 Eigen::Matrix<double, nHidden, 1> Network<nInput, nHidden, nOutput, nRBF>::ReLu_deriv (const Eigen::Matrix<double, nHidden, 1> &y) {
     Eigen::Matrix<double, nHidden, 1> B(y.rows(), y.cols());
     for( int i = 0; i < y.rows(); ++i )
-        for (int j=0; j < y.cols() ; ++j)
-        {
+        for (int j=0; j < y.cols() ; ++j)        {
             if (y(i,j) <= 0.0){
                 B(i,j)=(0.0);
             }
@@ -421,6 +426,21 @@ void Network<nInput, nHidden, nOutput, nRBF>::read_record(){
     std::cout << "Beta: \n" << Beta.transpose() << std::endl;
 }
 
+
+/**
+ * Set the RBF network
+ * @tparam nInput
+ * @tparam nHidden
+ * @tparam nOutput
+ * @tparam nRBF
+ */
+template<int nInput, int nHidden, int nOutput, int nRBF>
+void Network<nInput, nHidden, nOutput, nRBF>::SetRBF(){
+
+
+
+}
+
 /**
  * Store the weights to a file
  * @tparam nInput
@@ -430,37 +450,52 @@ void Network<nInput, nHidden, nOutput, nRBF>::read_record(){
  */
 template<int nInput, int nHidden, int nOutput, int nRBF>
 void Network<nInput, nHidden, nOutput, nRBF>::StoreWeights() {
-//
-//        // ** Save normalized states **
-//    std::string output = "";
-//    char filename[ ] = "Weights.csv";
-//    std::fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
-//
-//
-//    W;
-//    b;
-//    V;
-//    c;
-//    RBFout;
-//
-//    //std::cout<< "------" << std::endl << x.transpose() << "  size: "<< x.size() << std::endl;
-//    if (uidlFile.is_open()) {
-//        for (int j = 0; j < W.size(); j++)
-//            std::cout << W(0) << std::endl;
-//            //std::cout << W.row() << std::endl;
-//          //  for (int i = 0; i < (W.row()).size(); i++) {
-//            //    output += std::to_string(W(j,i)) + " ";
-//        }
-//
-//        output += '\n';
 
-        //output += std::to_string()
+        // ** Save normalized states **
+    std::string output = "";
+    char filename[ ] = "Weights.csv";
+    std::fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+
+
+//    std::cout<< "------" << std::endl << x.transpose() << "  size: "<< x.size() << std::endl;
+//    std::cout<< W.transpose() << "  \nsize: "<< W.size() << "\n rows" << W.rows() << std::endl;
+    if (uidlFile.is_open()) {
+        // W
+        for (int j = 0; j < W.size(); j++) { // Size is the size of the whole matrix rows*cols
+            output += std::to_string(W(j)) + " ";
+        }
+        output += '\n';
+        // b
+        for (int j = 0; j < b.size(); j++) { // Size is the size of the whole matrix rows*cols
+            output += std::to_string(b(j)) + " ";
+        }
+        output += '\n';
+        // V
+        for (int j = 0; j < V.size(); j++) { // Size is the size of the whole matrix rows*cols
+            output += std::to_string(V(j)) + " ";
+        }
+        output += '\n';
+        // c
+        for (int j = 0; j < c.size(); j++) { // Size is the size of the whole matrix rows*cols
+            output += std::to_string(c(j)) + " ";
+        }
+        output += '\n';
+        // RBF
+        for (int j = 0; j < RBFout.size(); j++) { // Size is the size of the whole matrix rows*cols
+            output += std::to_string(RBFout(j)) + " ";
+        }
+
+        output += '\n';
+        uidlFile << output;
+        uidlFile.close();
+    }
+
+       // output += std::to_string();
 }
 
     //std::cout << std::endl;
     //    std::cout << output << std::endl;
-        //uidlFile << output;
-        //uidlFile.close();
+
     // ****************************
 
 

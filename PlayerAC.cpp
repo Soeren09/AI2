@@ -18,6 +18,14 @@ PlayerAC::PlayerAC(int playerIdx, const std::array<int, 4> &piecePositions) : Pl
 
 }
 
+/**
+ * Reset player
+ */
+void PlayerAC::Reset() {
+    PlayerBase::Reset();
+    Reward = 0;
+}
+
 
 /**
  * This is the main function of this class. It rolls the dice and make the decision about what piece to move.
