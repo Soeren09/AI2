@@ -22,17 +22,19 @@ const int STATE_HOSTILE   = 3; // Piece located at hostile zone -> an enemy play
 const int STATE_HOME      = 4; // Piece located at home position
 
 // Reward table - transition table
-const int REWARD_ENTER_GOAL     = 2;
-const int REWARD_SAFE_ZONE      = 1;
-const int REWARD_NEUTRAL_ZONE   = 0;
-const int REWARD_HOSTILE_ZONE   =-1;
-const int REWARD_KILLED         =-2;
+const double REWARD_ENTER_GOAL     = 2;
+const double REWARD_SAFE_ZONE      = 1;
+const double REWARD_NEUTRAL_ZONE   = 0;
+const double REWARD_HOSTILE_ZONE   =-1;
+const double REWARD_KILLED         =-2;
 
 const int REWARD_ILLEGAL_MOVE   =-3;
 const int REWARD_NA             = 0;
 // A transition is indexed as the row being the current State and the coloumn the next state
-const std::array<const std::array<int, N_STATES> , N_STATES> REWARD_TABLE = {{
-     {REWARD_NA,REWARD_NA, REWARD_NA, REWARD_NA, REWARD_NA},                                        // Moving from STATE_GOAL to x
+const std::array<const std::array<double, N_STATES> , N_STATES> REWARD_TABLE = {{
+     {REWARD_NA,REWARD_NA, REWARD_NA, REWARD_NA,
+
+      },                                        // Moving from STATE_GOAL to x
      {REWARD_ENTER_GOAL, REWARD_SAFE_ZONE, REWARD_NEUTRAL_ZONE, REWARD_HOSTILE_ZONE, REWARD_NA},     // Moving from STATE_SAFE to x
      {REWARD_ENTER_GOAL, REWARD_SAFE_ZONE, REWARD_NEUTRAL_ZONE, REWARD_HOSTILE_ZONE, REWARD_KILLED}, // Moving from STATE_NEUTRAL to x
      {REWARD_ENTER_GOAL, REWARD_SAFE_ZONE, REWARD_NEUTRAL_ZONE, REWARD_HOSTILE_ZONE, REWARD_KILLED}, // Moving from STATE_HOSTILE to x

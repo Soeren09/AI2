@@ -40,13 +40,13 @@ Game::Game(PlayerBase &p1, PlayerBase &p2, PlayerBase &p3, PlayerBase &p4){
         if (!(p->GetReady())) {
             cout << "PlayerIdx: " << p->getPlayerIdx() << " is not ready. Reset player"<< endl;
             // TODO Reset is disabled
-            //p->Reset();
+            p->Reset();
         }
     }
 
     // TODO Shuffle disable
         // Random shuffle the players
-    //shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
+    shuffle (Players.begin(), Players.end(), std::mt19937(std::random_device()()));
 
     // Generate LUT:
     for (int i = 0; i < 52; i++) {
@@ -112,6 +112,7 @@ int Game::Run(int saveReplay=0, string replayPath="ludoReplay.txt"){
                 for (auto p: Players){
                     p->GamePlayed();
                 }
+                //return iteration;
                 return Players[playerTurn]->getPlayerIdx();
             }
 

@@ -15,7 +15,7 @@ PlayerAC::PlayerAC(int playerIdx, const std::array<int, 4> &piecePositions) : Pl
     CurState[1] = STATE_HOME;
     CurState[2] = STATE_HOME;
     CurState[3] = STATE_HOME;
-
+    UPDATE_FLAG = 1;
 }
 
 /**
@@ -87,7 +87,8 @@ void PlayerAC::GameAnalysis(int &movePieceIdx, int &diceRoll, enemyPiecePos &ene
     GetReward();
 
     ActorCritic.Critic(Reward);
-    ActorCritic.UpdateWeights();
+    if (UPDATE_FLAG)
+        ActorCritic.UpdateWeights();
 
     // Store the state
     StoreState();
@@ -207,6 +208,15 @@ void PlayerAC::StoreState() {
     StoredState[1] = CurState[1];
     StoredState[2] = CurState[2];
     StoredState[3] = CurState[3];
+}
+
+/**
+ * Set the update flag
+ * @param update true if the network should update
+ */
+void PlayerAC::SetUpdateFlag(int update){
+    UPDATE_FLAG = update;
+
 }
 
 /**

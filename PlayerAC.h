@@ -28,8 +28,7 @@ public:
     void NormalizeNetworkInputState();
 
     void Reset();
-
-
+    void SetUpdateFlag(int update);
 
 
 private:
@@ -41,13 +40,13 @@ private:
     actorCriticPieceState StoredState;
 
 
-
     //Eigen::Matrix<int, 20, 1> NetworkInputState;
     Eigen::Matrix<int, 4, 1> NetworkInputState;
-    // 90 RBF - lowest count for an activation function for 100 runs was 2
+    int UPDATE_FLAG;
 public:
-    int Reward;
-    Network<4, 10, 4, 90> ActorCritic;
+    double Reward;
+//    Network<20, 10, 4> ActorCritic;
+    Network<4, 8, 4> ActorCritic;
 
 };
 
